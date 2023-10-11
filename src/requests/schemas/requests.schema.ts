@@ -28,8 +28,8 @@ export class Requests{
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
     user: User;
 
-    // @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Workers'})
-    // worker: Workers;
+    @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Workers'})
+    worker: Workers;
 
 }
 

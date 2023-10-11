@@ -1,5 +1,6 @@
 import { IsEmpty, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { User } from "src/auth/schemas/user.schema";
+import { Workers } from "src/worker/schemas/worker.schema";
 
 
 export class UpdateRequestDto{
@@ -31,4 +32,7 @@ export class UpdateRequestDto{
 
     @IsEmpty({ message: 'You cannot pass user id' })
     readonly user: User;
+
+    @IsOptional()
+    readonly worker: Workers;
 }

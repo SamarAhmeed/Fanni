@@ -22,7 +22,7 @@ export class RequestsService {
     query["user"] = user._id;
 
     const requests = await this.requestsModel
-    .find({ ...query })
+    .find({ ...query }).populate('worker')
     .limit(resPerPage)
     .skip(skip);
 
@@ -44,7 +44,7 @@ export class RequestsService {
             throw new BadRequestException('Please enter correct id.');
         }
 
-        const request = await this.requestsModel.findById(id);
+        const request = (await this.requestsModel.findById(id).populate("worker"));
 
         if (!request) {
             throw new NotFoundException('Request not found.');

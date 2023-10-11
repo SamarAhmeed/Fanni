@@ -1,22 +1,22 @@
-import { IsEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 
 export class CreateWorkerDto{
 
     @IsString()
-    @IsEmpty()
+    @IsNotEmpty()
     readonly name: string;
     
     @IsString()
-    @IsEmpty()
+    @IsNotEmpty()
     readonly phone: string;
 
     @IsString()
-    @IsEmpty()
+    @IsNotEmpty()
     readonly field: string;
 
     @IsNumber()
-    @IsEmpty()
+    @IsNotEmpty()
     readonly avgRate: number;
 
 }
