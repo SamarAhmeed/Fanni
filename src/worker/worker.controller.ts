@@ -5,12 +5,15 @@ import { Workers } from './schemas/worker.schema';
 import { Query as ExpressQuery } from 'express-serve-static-core';
 import { CreateWorkerDto } from './dto/create-worker.dto';
 import { UpdateWorkerDto } from './dto/update-worker.dto';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @Controller('worker')
 @UseGuards(AuthGuard())
+@ApiTags('Worker')
 export class WorkerController {
 
     constructor(private workerService: WorkerService) {}
+    @ApiOperation({ summary: 'Gets all workers' })
     @Get()
     async getAllWorkers(
         @Query() 
@@ -19,6 +22,7 @@ export class WorkerController {
         return this.workerService.findAll(query);
       }
 
+    @ApiOperation({ summary: 'Creates new worker' })
     @Post()
     async createWorker(
         @Body()
@@ -27,6 +31,7 @@ export class WorkerController {
         return this.workerService.create(worker);
     }
 
+    @ApiOperation({ summary: 'Gets worker by id' })
     @Get(':id')
     async getRequest( 
         @Param('id') id: string
@@ -34,6 +39,7 @@ export class WorkerController {
         return this.workerService.findById(id);
     }
 
+    @ApiOperation({ summary: 'Updates the worker for given id' })
     @Put(':id')
     async updateRequest( 
         @Param('id') id: string,
@@ -42,6 +48,7 @@ export class WorkerController {
         return this.workerService.updateById(id, worker);
     }
 
+    @ApiOperation({ summary: 'Deletes the worker for given id' })
     @Delete(':id')
     async deleteRequest(
         @Param('id') id: string,

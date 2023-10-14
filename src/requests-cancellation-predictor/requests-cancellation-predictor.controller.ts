@@ -5,6 +5,7 @@ import * as tf from '@tensorflow/tfjs';
 import { fromJSON, setBackend, DecisionTreeClassifier, trainTestSplit } from 'scikitjs';
 import { promises } from 'fs';
 import { RequestsCancellationPredictorService } from './requests-cancellation-predictor.service';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 setBackend(tf)
 enum Labels {
@@ -18,6 +19,7 @@ enum Labels {
 
 @Controller('requests-cancellation-predictor')
 // @UseGuards(AuthGuard())
+@ApiTags('RequestsCancellationPredictor')
 export class RequestsCancellationPredictorController {
 
     constructor(private requestsPredictorService: RequestsCancellationPredictorService) {}
@@ -36,7 +38,8 @@ export class RequestsCancellationPredictorController {
       
         return correctPredictions / predictions.length;
       }
-    
+
+    @ApiOperation({ summary: 'Used for Train the Meachine Learning model' })
     @Get('/train')
     async getCancellationTrainModel(
         @Query() 
@@ -119,6 +122,7 @@ export class RequestsCancellationPredictorController {
     }
 
 
+    @ApiOperation({ summary: 'Used for Predict the cancelation status for given request id' })
     @Get('/predict/:id')
     async getCancellationPrediction(
         @Param('id') id: string,
