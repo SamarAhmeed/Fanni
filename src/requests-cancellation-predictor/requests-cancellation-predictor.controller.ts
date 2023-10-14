@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Query, Body, Req, UseGuards, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Query, Req, UseGuards, Param } from '@nestjs/common';
 import { Query as ExpressQuery } from 'express-serve-static-core';
 import { AuthGuard } from '@nestjs/passport';
 import * as tf from '@tensorflow/tfjs';
@@ -58,26 +58,26 @@ export class RequestsCancellationPredictorController {
             let y =[];
 
             // collecting features from the requests.
-            for(let i = 0; i<requests.length; i++){
-                const request = requests[i].toObject();
+            for(const element of requests){
+                const request = element.toObject();
                 if (request.status != 'reviewed' && request.status != 'done' && request.status != 'canceled')continue;
                 if (! request?.appliedWorkersDetails?.length)continue;
                 
                 let hasPostpone = 0;
-                for (let j=0; j<request.statuses.length; j++){
-                    if (request.statuses[j].status == 'postponed'){
+                for (const element of request.statuses){
+                    if (element.status == 'postponed'){
                         hasPostpone = 1;
                         break;
                     }
                 }
-                for (let j=0; j<request.appliedWorkersDetails.length; j++){
+                for (const element of request.appliedWorkersDetails){
                     let averageRating = 0;
                     let distanceFromRequestLocation = 0;
                     
-                    if (request.appliedWorkersDetails[j].averageRating) 
-                        averageRating = request.appliedWorkersDetails[j].averageRating;
-                    if (request.appliedWorkersDetails[j].distanceFromRequestLocation)
-                        distanceFromRequestLocation = request.appliedWorkersDetails[j].distanceFromRequestLocation;
+                    if (element.averageRating) 
+                        averageRating = element.averageRating;
+                    if (element.distanceFromRequestLocation)
+                        distanceFromRequestLocation = element.distanceFromRequestLocation;
                     
                     let features = [request.total, hasPostpone, averageRating,distanceFromRequestLocation];
                     X.push(features);
@@ -107,7 +107,7 @@ export class RequestsCancellationPredictorController {
 
             // building the model
             const clf = new DecisionTreeClassifier({ criterion: 'gini', maxDepth: 4 })
-            await clf.fit(XTrain, yTrain)
+            clf.fit(XTrain, yTrain)
             
             // save the model as json file
             const clf2 = await clf.toJSON();
@@ -135,8 +135,8 @@ export class RequestsCancellationPredictorController {
 
             // collecting features from the request.
             let hasPostpone = 0;
-            for (let i = 0; i<request.statuses.length; i++){
-                if (request.statuses[i].status == 'postponed'){
+            for (const element of request.statuses){
+                if (element.status == 'postponed'){
                     hasPostpone = 1;
                     break;
                 }
