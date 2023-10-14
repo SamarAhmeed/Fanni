@@ -20,9 +20,13 @@ export class RequestsService {
     const skip = resPerPage * (currentPage - 1);
 
     // query["user"] = user._id;
-
+    const filter = query.status
+    ? {
+        status: query.status
+      }
+    : {};
     const requests = await this.requestsModel
-    .find({ ...query }).populate('appliedWorkersDetails')
+    .find({ ...filter }).populate('appliedWorkersDetails')
     .limit(resPerPage)
     .skip(skip);
 
