@@ -17,7 +17,7 @@ export class Requests{
     status: string;
 
     @Prop()
-    cost: number;
+    total: number;
 
     @Prop()
     city: string;
@@ -29,7 +29,7 @@ export class Requests{
     user: User;
 
     @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Workers'})
-    worker: Workers;
+    appliedWorkersDetails: Workers;
 
 }
 

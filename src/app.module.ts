@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { WorkerModule } from './worker/worker.module';
 import { RequestsModule } from './requests/requests.module';
+import { RequestsCancellationPredictorModule } from './requests-cancellation-predictor/requests-cancellation-predictor.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { RequestsModule } from './requests/requests.module';
     MongooseModule.forRoot(process.env.DB_URI),
     AuthModule,
     WorkerModule,
-    RequestsModule
+    RequestsModule,
+    RequestsCancellationPredictorModule
   ],
   controllers: [AppController],
   providers: [AppService],

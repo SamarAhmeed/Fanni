@@ -9,7 +9,7 @@ export class UpdateWorkerDto{
     
     @IsString()
     @IsOptional()
-    readonly phone: string;
+    readonly username: string;
 
     @IsString()
     @IsOptional()
@@ -17,6 +17,9 @@ export class UpdateWorkerDto{
 
     @IsNumber()
     @IsOptional()
-    readonly avgRate: number;
+    readonly averageRating: number;
 
+    @IsNumber()
+    @IsOptional()
+    readonly distanceFromRequestLocation: number;
 }

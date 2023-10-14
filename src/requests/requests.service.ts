@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Requests } from './schemas/requests.schema';
 import * as mongoose from 'mongoose';
@@ -15,14 +15,14 @@ export class RequestsService {
       ) {}
 
     async findAll(query: Query, user: User): Promise<Requests[]> {
-    const resPerPage = 2;
+    const resPerPage = Number(query.pageSize) || 10;
     const currentPage = Number(query.page) || 1;
     const skip = resPerPage * (currentPage - 1);
 
-    query["user"] = user._id;
+    // query["user"] = user._id;
 
     const requests = await this.requestsModel
-    .find({ ...query }).populate('worker')
+    .find({ ...query }).populate('appliedWorkersDetails')
     .limit(resPerPage)
     .skip(skip);
 
@@ -37,35 +37,49 @@ export class RequestsService {
         return res;
       }
     
-    async findById(id: string): Promise<Requests> {
+    async findById(id: string, user:User): Promise<Requests> {
         const isValidId = mongoose.isValidObjectId(id);
 
         if (!isValidId) {
             throw new BadRequestException('Please enter correct id.');
         }
 
-        const request = (await this.requestsModel.findById(id).populate("worker"));
+        const request = (await this.requestsModel.findById(id).populate("appliedWorkersDetails"));
 
         if (!request) {
             throw new NotFoundException('Request not found.');
         }
 
+        if (! request.user.equals(user._id)){
+          throw new NotAcceptableException('You do not have access on this request.');
+        }
+
         return request;
     }
     
-    async updateById(id:string, request: Requests): Promise<Requests>{
+    async updateById(id:string, request: Requests, user: User): Promise<Requests>{
         const isValidId = mongoose.isValidObjectId(id);
 
         if (!isValidId) {
           throw new BadRequestException('Please enter correct id.');
         }
+
+        const request_data = (await this.requestsModel.findById(id));
+        if (request_data && ! request_data.user.equals(user._id)){
+          throw new NotAcceptableException('You do not have access on this request.');
+        }
+
         return await this.requestsModel.findByIdAndUpdate(id, request, {
             new: true,
             runValidators: true,
           });
     }
 
-    async deleteById(id:string): Promise<Requests> {
+    async deleteById(id:string, user: User): Promise<Requests> {
+      const request_data = (await this.requestsModel.findById(id));
+      if (request_data && ! request_data.user.equals(user._id)){
+        throw new NotAcceptableException('You do not have access on this request.');
+      }
         return await this.requestsModel.findByIdAndDelete(id);
     }
 

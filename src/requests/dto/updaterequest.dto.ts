@@ -15,7 +15,7 @@ export class UpdateRequestDto{
 
     @IsOptional()
     @IsNumber()
-    readonly cost: number;
+    readonly total: number;
 
 
     @IsOptional()
@@ -34,5 +34,5 @@ export class UpdateRequestDto{
     readonly user: User;
 
     @IsOptional()
-    readonly worker: Workers;
+    readonly appliedWorkersDetails: Workers;
 }

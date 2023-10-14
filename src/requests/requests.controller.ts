@@ -34,24 +34,27 @@ export class RequestsController {
 
     @Get(':id')
     async getRequest( 
-        @Param('id') id: string
+        @Param('id') id: string,
+        @Req() req,
         ): Promise<Requests>{
-        return this.requestsService.findById(id);
+        return this.requestsService.findById(id, req.user);
     }
 
     @Put(':id')
     async updateRequest( 
         @Param('id') id: string,
         @Body() request: UpdateRequestDto,
+        @Req() req,
         ): Promise<Requests>{
-        return this.requestsService.updateById(id, request);
+        return this.requestsService.updateById(id, request, req.user);
     }
 
     @Delete(':id')
     async deleteRequest(
         @Param('id') id: string,
+        @Req() req,
     ): Promise<Requests>{
-        return this.requestsService.deleteById(id);
+        return this.requestsService.deleteById(id, req.user);
     }
 
 }

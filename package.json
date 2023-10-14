@@ -27,6 +27,7 @@
     "@nestjs/mongoose": "^10.0.1",
     "@nestjs/passport": "^10.0.2",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/swagger": "^7.1.13",
     "@tensorflow/tfjs": "^4.11.0",
     "@tensorflow/tfjs-node": "^4.11.0",
     "bcryptjs": "^2.4.3",
@@ -36,7 +37,8 @@
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "scikitjs": "^1.24.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

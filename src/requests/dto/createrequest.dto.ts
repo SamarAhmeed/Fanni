@@ -15,7 +15,7 @@ export class CreateRequestDto{
 
     @IsNotEmpty()
     @IsNumber()
-    readonly cost: number;
+    readonly total: number;
 
 
     @IsNotEmpty()
@@ -33,6 +33,6 @@ export class CreateRequestDto{
     @IsEmpty({ message: 'You cannot pass user id' })
     readonly user: User;
 
-    @IsNotEmpty()
-    readonly worker: Workers;
+    @IsOptional()
+    readonly appliedWorkersDetails: Workers;
 }

@@ -9,7 +9,7 @@ export class CreateWorkerDto{
     
     @IsString()
     @IsNotEmpty()
-    readonly phone: string;
+    readonly username: string;
 
     @IsString()
     @IsNotEmpty()
@@ -17,6 +17,10 @@ export class CreateWorkerDto{
 
     @IsNumber()
     @IsNotEmpty()
-    readonly avgRate: number;
+    readonly averageRating: number;
+
+    @IsNumber()
+    @IsNotEmpty()
+    readonly distanceFromRequestLocation: number;
 
 }

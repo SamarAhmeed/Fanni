@@ -13,14 +13,17 @@ export class Workers{
     name: string;
 
     @Prop()
-    phone: string;
+    username: string;
 
     @Prop()
     field: string;
 
     @Prop()
-    avgRate: number;
+    averageRating: number;
 
+    @Prop()
+    distanceFromRequestLocation: number;
+    
 }
 
 export const WorkerSchema = SchemaFactory.createForClass(Workers); 
