@@ -19,14 +19,15 @@ export class RequestsService {
     const currentPage = Number(query.page) || 1;
     const skip = resPerPage * (currentPage - 1);
 
-    // query["user"] = user._id;
+   
     const filter = query.status
     ? {
-        status: query.status
+        status: query.status,
       }
     : {};
+    filter["user"] = user._id;
     const requests = await this.requestsModel
-    .find({ ...filter }).populate('appliedWorkersDetails')
+    .find({ ...filter }).populate('appliedWorkerDetail')
     .limit(resPerPage)
     .skip(skip);
 
@@ -48,7 +49,7 @@ export class RequestsService {
             throw new BadRequestException('Please enter correct id.');
         }
 
-        const request = (await this.requestsModel.findById(id).populate("appliedWorkersDetails"));
+        const request = (await this.requestsModel.findById(id).populate("appliedWorkerDetail"));
 
         if (!request) {
             throw new NotFoundException('Request not found.');

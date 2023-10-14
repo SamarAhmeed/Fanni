@@ -17,7 +17,7 @@ enum Labels {
   };
 
 @Controller('requests-cancellation-predictor')
-@UseGuards(AuthGuard())
+// @UseGuards(AuthGuard())
 export class RequestsCancellationPredictorController {
 
     constructor(private requestsPredictorService: RequestsCancellationPredictorService) {}
@@ -58,7 +58,7 @@ export class RequestsCancellationPredictorController {
             for(let i = 0; i<requests.length; i++){
                 const request = requests[i].toObject();
                 if (request.status != 'reviewed' && request.status != 'done' && request.status != 'canceled')continue;
-                if (! request.appliedWorkersDetails.length)continue;
+                if (! request?.appliedWorkersDetails?.length)continue;
                 
                 let hasPostpone = 0;
                 for (let j=0; j<request.statuses.length; j++){
@@ -98,7 +98,7 @@ export class RequestsCancellationPredictorController {
                     }
                 }
             }
-
+            
             // split the data into train and test
             let [XTrain, XTest, yTrain, yTest] = trainTestSplit(X, y, 0.4)
 
@@ -114,7 +114,8 @@ export class RequestsCancellationPredictorController {
             // test and caculate the accuracy
             let yPredict = clf.predict(XTest);
             let accuracy = this.calculateAccuracy(yPredict, yTest)
-            return (accuracy * 100).toString()+'%';
+            
+            return 'The Accuracy of the Test is '+(accuracy * 100).toString()+'%';
     }
 
 
@@ -123,31 +124,31 @@ export class RequestsCancellationPredictorController {
         @Param('id') id: string,
         ): Promise<string> {
             
+        
+            // get the request with given id from database
+            let request = await this.requestsPredictorService.findById(id);
+            request = request.toObject();
+
+            // collecting features from the request.
+            let hasPostpone = 0;
+            for (let i = 0; i<request.statuses.length; i++){
+                if (request.statuses[i].status == 'postponed'){
+                    hasPostpone = 1;
+                    break;
+                }
+            }
+            let averageRating = 0;
+            let distanceFromRequestLocation = 0;
+            if (request?.appliedWorkersDetails?.length){
+                if (request.appliedWorkersDetails[0].averageRating) 
+                    averageRating = request.appliedWorkersDetails[0].averageRating;
+                if (request.appliedWorkersDetails[0].distanceFromRequestLocation)
+                    distanceFromRequestLocation = request.appliedWorkersDetails[0].distanceFromRequestLocation;
+            }
+            let X = [[request.total, hasPostpone, averageRating, distanceFromRequestLocation]];
+            
             try{
-                // get the request with given id from database
-                let request = await this.requestsPredictorService.findById(id);
-                request = request.toObject();
-
-                // collecting features from the request.
-                let hasPostpone = 0;
-                for (let i = 0; i<request.statuses.length; i++){
-                    if (request.statuses[i].status == 'postponed'){
-                        hasPostpone = 1;
-                        break;
-                    }
-                }
-                let averageRating = 0;
-                let distanceFromRequestLocation = 0;
-                if (request.appliedWorkersDetails.length){
-                    if (request.appliedWorkersDetails[0].averageRating) 
-                        averageRating = request.appliedWorkersDetails[0].averageRating;
-                    if (request.appliedWorkersDetails[0].distanceFromRequestLocation)
-                        distanceFromRequestLocation = request.appliedWorkersDetails[0].distanceFromRequestLocation;
-                }
-                let X = [[request.total, hasPostpone, averageRating, distanceFromRequestLocation]];
-                
-
-                // load the saved model
+            // load the saved model
                 const model = await promises.readFile('./mlModel.json');
                 const modelJson = JSON.parse(model.toString());
                 const clf = await fromJSON(modelJson);

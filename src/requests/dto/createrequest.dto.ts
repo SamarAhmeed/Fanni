@@ -34,5 +34,5 @@ export class CreateRequestDto{
     readonly user: User;
 
     @IsOptional()
-    readonly appliedWorkersDetails: Workers;
+    readonly appliedWorkerDetail: Workers;
 }

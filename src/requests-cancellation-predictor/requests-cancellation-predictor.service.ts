@@ -20,7 +20,7 @@ export class RequestsCancellationPredictorService {
         const skip = resPerPage * (currentPage - 1);
       
         const requests = await this.requestsPredictorModel
-        .find({})
+        .find()
         .limit(resPerPage)
         .skip(skip);
 

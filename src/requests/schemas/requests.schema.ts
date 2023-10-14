@@ -29,7 +29,7 @@ export class Requests{
     user: User;
 
     @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Workers'})
-    appliedWorkersDetails: Workers;
+    appliedWorkerDetail: Workers;
 
 }
 
