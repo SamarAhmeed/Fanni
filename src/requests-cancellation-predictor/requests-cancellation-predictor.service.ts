@@ -24,6 +24,9 @@ export class RequestsCancellationPredictorService {
         .limit(resPerPage)
         .skip(skip);
 
+        if (!requests) {
+            throw new NotFoundException('Requests not found.');
+        }
         return requests;
         
     }

@@ -71,34 +71,30 @@ export class RequestsCancellationPredictorController {
                     }
                 }
                 for (const element of request.appliedWorkersDetails){
-                    let averageRating = 0;
-                    let distanceFromRequestLocation = 0;
-                    
-                    if (element.averageRating) 
-                        averageRating = element.averageRating;
-                    if (element.distanceFromRequestLocation)
-                        distanceFromRequestLocation = element.distanceFromRequestLocation;
+
+                    const averageRating = element.averageRating ?? 0;
+                    const distanceFromRequestLocation = element.distanceFromRequestLocation ?? 0;
                     
                     let features = [request.total, hasPostpone, averageRating,distanceFromRequestLocation];
                     X.push(features);
 
                     if (request.status == 'reviewed' || request.status == 'done')
                         y.push(Labels.MayBeDone);
-                    else{
-                        if (request.cancellationReason == 'CustomerAskedForPostpone')
+
+                    else if (request.cancellationReason == 'CustomerAskedForPostpone')
                             y.push(Labels.MayBeCanceled_CustomerAskedForPostpone);
-                        else if (request.cancellationReason == 'feelThePriceOfTheApplicationIsHigh')
-                            y.push(Labels.MayBeCanceled_feelThePriceOfTheApplicationIsHigh);
+
+                    else if (request.cancellationReason == 'feelThePriceOfTheApplicationIsHigh')
+                        y.push(Labels.MayBeCanceled_feelThePriceOfTheApplicationIsHigh);
+                    
+                    else if (request.cancellationReason == 'theTechnicalPriceHigherThanTheApplication')
+                        y.push(Labels.MayBeCanceled_theTechnicalPriceHigherThanTheApplication);
                         
-                        else if (request.cancellationReason == 'theTechnicalPriceHigherThanTheApplication')
-                            y.push(Labels.MayBeCanceled_theTechnicalPriceHigherThanTheApplication);
-                            
-                        else if (request.cancellationReason == 'LocationIsTooFar')
-                            y.push(Labels.MayBeCanceled_LocationIsTooFar);
-                        
-                        else
-                            y.push(Labels.MayBeCanceled)
-                    }
+                    else if (request.cancellationReason == 'LocationIsTooFar')
+                        y.push(Labels.MayBeCanceled_LocationIsTooFar);
+                    
+                    else
+                        y.push(Labels.MayBeCanceled)
                 }
             }
             
@@ -118,7 +114,7 @@ export class RequestsCancellationPredictorController {
             let yPredict = clf.predict(XTest);
             let accuracy = this.calculateAccuracy(yPredict, yTest)
             
-            return 'The Accuracy of the Test is '+(accuracy * 100).toString()+'%';
+            return 'The Accuracy of the validation Test is '+(accuracy * 100).toString()+'%';
     }
 
 
@@ -141,14 +137,10 @@ export class RequestsCancellationPredictorController {
                     break;
                 }
             }
-            let averageRating = 0;
-            let distanceFromRequestLocation = 0;
-            if (request?.appliedWorkersDetails?.length){
-                if (request.appliedWorkersDetails[0].averageRating) 
-                    averageRating = request.appliedWorkersDetails[0].averageRating;
-                if (request.appliedWorkersDetails[0].distanceFromRequestLocation)
-                    distanceFromRequestLocation = request.appliedWorkersDetails[0].distanceFromRequestLocation;
-            }
+
+            let averageRating = request.appliedWorkersDetails?.[0].averageRating ?? 0;
+            let distanceFromRequestLocation = request.appliedWorkersDetails?.[0].distanceFromRequestLocation ?? 0;
+            
             let X = [[request.total, hasPostpone, averageRating, distanceFromRequestLocation]];
             
             try{
